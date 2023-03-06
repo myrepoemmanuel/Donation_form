@@ -51,10 +51,11 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+    <div id="animor"></div>
     <section class="main_sec">
         
-            <img class="" src="{% static 'img/UET.jpg' %}" alt="">
-            <h2 class="">
+            <img class="poster" src="{% static 'img/UET.jpg' %}" alt="">
+            <h2 class="verse">
                 The people rejoiced over the offerings, for they had given 
                 freely and wholeheartedly to the LORD...
             </h2>
@@ -88,6 +89,11 @@
 
     <script src="{% static 'js/aform.js' %}"></script>
     <script>
+
+        // let poster = document.getElementsByClassName("poster")[0].getBoundingClientRect().height;
+        // console.log(poster)
+
+        // document.getElementsByClassName("verse")[0].style.height = poster + "px";
 
         
         const textRx = /[a-z ]+/i
@@ -176,7 +182,7 @@
 
         let position = 5;
 
-        main_swiper = document.getElementsByTagName("body")[0];
+        main_swiper = document.getElementById("animor");
 
         function randomNumber(min, max) {
             return Math.random() * (max - min) + min;
@@ -203,7 +209,7 @@
                 main_swiper.append(flake);
                 
             
-            position += 4;
+            position += Math.ceil(randomNumber(1,11));
             
         }
 
@@ -213,7 +219,7 @@
 
         for (let f = 0; f < allFlakes.length; f++) {
             let cflake = allFlakes[f];
-            cflake.style.animationDelay  = ((randomNumber(0, allFlakes.length)) +1) + "s";
+            cflake.style.animationDelay  = ((randomNumber(0, allFlakes.length)) +5) + "s";
         }
 
     </script>
