@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pledge Card</title>
+    <script type="text/javascript">
+            let user = '{{request.user}}';
+            
+            function getToken(name){
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== ''){
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++){
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0 , name.length + 1) === (name + '=')){
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+            }
+            const csrftoken = getToken('csrftoken')
+
+            function getCookie(name){
+                // Split cookie string and get all individual name=value pairs in an array
+                var cookieArr = document.cookie.split(";");
+
+                // loop through the array elements
+                for(let i=0; i < cookieArr.length; i++){
+                    let cookiePair = cookieArr[i].split("=");
+
+                    /*removing whitespace at the begining of cookie name and 
+                    compare it with given string*/
+                    if (name == cookiePair[0].trim()){
+                        //decode cookie value and return
+                        return decodeURIComponent(cookiePair[1]);
+                    }
+
+                }
+
+                //return null if not found
+                return null;
+            }
+            
+        
+    </script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <section class="main_sec">
+        
+            <img class="" src="{% static 'img/UET.jpg' %}" alt="">
+            <h2 class="">
+                The people rejoiced over the offerings, for they had given 
+                freely and wholeheartedly to the LORD...
+            </h2>
+    </section>
+    <form id="form">
+        
+            <h1>Mission Fund Drive</h1>
+            <h2>For the purpose of supporting the ongoing fund drive UET UON's annual mission planning and public address system upgrade.</h2>
+            <h3>I wish to contribute...</h3>
+            <div class="addr-form-det">
+                <input class="box-inputs"id="fname" name="fname" type="text" placeholder="Full Name" required>
+            
+                <input class="box-inputs" id="amnt" name="amount" type="text" placeholder="Amount" pattern="^[/d+]\d*$" step="1" required>
+            </div>
+
+            <div class="mk-pledge">
+                <input style="margin-bottom: 20px;" id="make-pledge" type="submit" value="Donate">
+            </div>
+        
+    </form>
+    <table>
+        <th>Full Name</th>
+        <th>Amount</th>
+        {% for donor in donations %}
+        <tr>
+            <td>{{donor.name}}</td>
+            <td>{{donor.amount}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script src="{% static 'js/aform.js' %}"></script>
+    <script>
+
+        
+        const textRx = /[a-z ]+/i
+        validatr = (event) => {
+            if (
+            (event.key.length > 2) ||
+            event.ctrlKey ||
+            ( (event.key === "-") && (!event.currentTarget.value.length) ) ||
+            textRx.test(event.key)
+            ) return;
+            event.preventDefault();
+            if (textRx.test(this.value) !== true){
+                this.value = this.value.replace(textRx, '');
+            }
+        };
+
+
+        document.getElementById('fname').addEventListener("keydown", validatr);
+
+        const intRx = /\d/,
+        integerChange = (event) => {
+            if (
+            (event.key.length > 1) ||
+            event.ctrlKey ||
+            ( (event.key === "-") && (!event.currentTarget.value.length) ) ||
+            intRx.test(event.key)
+            ) return;
+            event.preventDefault();
+            
+        };
+
+
+        document.getElementById("amnt").addEventListener("keydown", integerChange);
+
+
+
+
+
+
+        var form = document.getElementById('form');
+        
+
+        document.getElementById('make-pledge').addEventListener('click', function(e){
+            e.preventDefault()
+            if (form.fname.value.length <= 2){
+                alert("Invalid Name")
+            }else if (form.amount.value.length <= 2) {
+                alert("Invalid Amount")
+            }else{
+                submitFormData()
+            }
+        })
+        
+        
+        
+        
+        function submitFormData(){
+            var userPayData = {
+                'name': form.fname.value,
+                'amount': form.amount.value,
+            }
+            
+            console.log(userPayData)
+            
+            var url = 'sendDonation/';
+
+                    fetch(url, {
+                        method:'POST',
+                        headers: {
+                            'Content-Type':'application/json',
+                            'X-CSRFToken': csrftoken,
+                        },
+                        body:JSON.stringify({'userPayData': userPayData,})
+
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('success:',data);
+                        alert('Thank you');
+                        // deleting the cart cookie on complete transaction
+                        window.location.href = "{% url 'index' %}"
+                    })
+            
+            
+        }
+
+        let position = 5;
+
+        main_swiper = document.getElementsByTagName("body")[0];
+
+        function randomNumber(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        let myimg = [
+            "Hello",
+            `<img src='{% static "img/live-music.png" %}'/>`,
+            `<img src='{% static "img/guitar.png" %}'/>`,
+            `<img src='{% static "img/music-instrument.png" %}'/>`
+        ]
+
+        
+
+        while (position <= 100) {
+            
+                let abc = (Math.ceil(randomNumber(0,3)))
+                let finImg = myimg[abc];
+                let flake = document.createElement("span");
+                flake.setAttribute('class', 'flake')
+                flake.innerHTML += finImg;
+                flake.style.left = position + "vw";
+                
+                main_swiper.append(flake);
+                
+            
+            position += 4;
+            
+        }
+
+        let allFlakes = document.getElementsByClassName('flake');
+
+
+
+        for (let f = 0; f < allFlakes.length; f++) {
+            let cflake = allFlakes[f];
+            cflake.style.animationDelay  = ((randomNumber(0, allFlakes.length)) +1) + "s";
+        }
+
+    </script>
+</body>
+</html>
